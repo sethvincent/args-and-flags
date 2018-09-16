@@ -1,0 +1,194 @@
+const minimist = require('minimist')
+const isBoolean = require('is-boolean-object')
+const isRegexp = require('is-regexp')
+
+/**
+* Parse and validate args and flags for cli tools
+* @param [args] - arguments
+* @param [flags] - flags
+* @param [indent] - how many spaces to indent help text
+**/
+class ArgsAndFlags {
+  constructor (options) {
+    let { args, flags } = options
+    if (!args) args = []
+    if (!flags) flags = []
+    this.indent = options.indent || 2
+    this.argsOptions = args
+    this.flagsOptions = flags
+    this.minimistOptions = {}
+    this.minimistOptions.boolean = getBooleans(this.flagsOptions)
+    this.minimistOptions.string = getStrings(this.flagsOptions)
+    this.minimistOptions.alias = getAlias(this.flagsOptions)
+  }
+
+  /**
+  * Parse and validate args and flags for cli tools
+  * @param {object[]} argsInput - actual args supplied at command line
+  * @return {object}
+  **/
+  parse (argsInput) {
+    const minimistOutput = minimist(argsInput, this.minimistOptions)
+
+    const minimistArgs = minimistOutput['_'].reduce((obj, arg, i) => {
+      if (!this.argsOptions[i]) {
+        obj[arg] = arg
+        return obj
+      }
+
+      const argType = this.argsOptions[i].type
+
+      if (this.argsOptions[i]) {
+        if (this.validate(argType, arg)) {
+          obj[this.argsOptions[i].name] = arg
+        } else {
+          throw new Error(`${arg} must be a ${argType}`)
+        }
+      }
+
+      return obj
+    }, {})
+
+    this.argsOptions.forEach((argOption, i) => {
+      if (!minimistArgs[argOption.name]) {
+        if (argOption.default) {
+          minimistArgs[argOption.name] = argOption.default
+        } else {
+          if (argOption.required) {
+            console.error(new Error(`arg \`${argOption.name}\` is required`))
+            process.exit(1)
+          }
+        }
+      }
+    })
+
+    const minimistFlags = minimistOutput
+    delete minimistOutput['_']
+
+    this.flagsOptions.forEach((flagOption) => {
+      if (minimistFlags[flagOption.name]) {
+        this.validate(flagOption.type, minimistFlags[flagOption.name])
+      } else {
+        if (flagOption.default) {
+          minimistFlags[flagOption.name] = flagOption.default
+        } else {
+          if (flagOption.required) {
+            console.error(new Error(`flag \`${flagOption.name}\` is required`))
+            process.exit(1)
+          }
+        }
+      }
+    })
+
+    return {
+      args: minimistArgs,
+      flags: minimistFlags
+    }
+  }
+
+  validate (type, value) {
+    if (!type) return true
+
+    // TODO: this validation could be much smarter.
+    // initially the plan was to use json schema. still could.
+    if (type === 'string') {
+      return typeof value === 'string'
+    } else if (type === 'number') {
+      return typeof value === 'number'
+    } else if (type === 'boolean') {
+      return isBoolean(value)
+    } else if (type === 'array') {
+      return Array.isArray(value)
+    } else if (type === 'function') {
+      return type(value)
+    } else if (isRegexp(type) && typeof value === 'string') {
+      return value.match(type)
+    }
+
+    throw new Error(`type "${type}" and value ${value} not supported`)
+  }
+
+  _createIndent (multiplier) {
+    const indent = multiplier ? (this._indent || 1) * multiplier : this._indent
+    return ' '.repeat(indent)
+  }
+
+  /**
+  * Get help text for all args
+  * @param {object} [options]
+  * @param {string} [options.argsHeaderText] - header text above list of arguments. default is `Arguments`
+  * @param {string} [options.flagsHeaderText] - header text above list of flags. default is `Flags`
+  * @param {number} [paddingWidth] - max width in number of space characters. default is `30`
+  * @returns {string}
+  **/
+  help (options) {
+    options = options || {}
+    const { argsHeaderText, flagsHeaderText, paddingWidth } = options
+    const args = this.argsHelp(argsHeaderText, paddingWidth)
+    const flags = this.flagsHelp(flagsHeaderText, paddingWidth)
+    return args + '\n\n' + flags
+  }
+
+  /**
+  * Get help text for all args
+  * @param {string} headerText - header text above list of arguments. default is `Arguments`
+  * @param {number} paddingWidth - max width in number of space characters. default is `30`
+  * @returns {string}
+  **/
+  argsHelp (headerText, paddingWidth) {
+    if (!this.argsOptions.length) return ''
+    const argumentsHeader = `${this._createIndent()}${headerText || 'Arguments'}\n`
+
+    return argumentsHeader + this.argsOptions.map((arg) => {
+      const line = `${this._createIndent(2)}{${arg.name}}`
+      const width = (paddingWidth || 30) - line.length
+      const padding = ' '.repeat(width)
+      return line + padding + (arg.help || '')
+    }).join('\n')
+  }
+
+  /**
+  * Get help text for all flags
+  * @param {string} headerText - header text above list of flags. default is `Flags`
+  * @param {number} paddingWidth - max width in number of space characters. default is `30`
+  * @returns {string}
+  **/
+  flagsHelp (headerText, paddingWidth) {
+    if (!this.flagsOptions.length) return ''
+    const flagsHeader = `${this._createIndent()}${headerText || 'Flags'}\n`
+
+    return flagsHeader + this.flagsOptions.map((flag) => {
+      const line = `${this._createIndent(2)}--${flag.name}${this._addFlagAlias(flag)}    `
+      const width = (paddingWidth || 30) - line.length
+      const padding = ' '.repeat(width)
+      return line + padding + (flag.help || '')
+    }).join('\n')
+  }
+
+  _addFlagAlias (flag) {
+    return (flag && flag.alias) ? `, -${flag.alias}` : ''
+  }
+}
+
+module.exports = ArgsAndFlags
+
+function getBooleans (arr) {
+  return arr
+    .filter((item) => { return item.type === 'boolean' })
+    .map((item) => { return item.name })
+}
+
+function getStrings (arr) {
+  return arr
+    .filter((item) => { return item.type === 'string' })
+    .map((item) => { return item.name })
+}
+
+function getAlias (arr) {
+  return arr
+    .filter((item) => { return item.alias })
+    .reduce((obj, item) => {
+      obj[item.name] = item.alias
+      return obj
+    }, {})
+}
