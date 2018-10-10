@@ -93,6 +93,8 @@ class ArgsAndFlags {
     // initially the plan was to use json schema. still could.
     if (type === 'string') {
       return typeof value === 'string'
+    } else if (type === 'integer') {
+      return Number.isInteger(value)
     } else if (type === 'number') {
       return typeof value === 'number'
     } else if (type === 'boolean') {

@@ -17,16 +17,23 @@ test('hello args and flags', function (t) {
         alias: 'm',
         type: 'boolean',
         help: 'a boolean argument'
+      },
+      {
+        name: 'int',
+        alias: 'i',
+        type: 'integer',
+        help: 'an integer argument'
       }
     ]
   }
 
   const parser = new ArgsAndFlags(options)
-  const { args, flags } = parser.parse(['hi', '-m'])
+  const { args, flags } = parser.parse(['hi', '-m', '--int', '1'])
 
   t.ok(args.hello === 'hi')
   t.ok(flags.message === true)
   t.ok(flags.m === true)
+  t.ok(flags.int === 1)
 
   t.end()
 })
