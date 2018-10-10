@@ -8,10 +8,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - ???
 
+## [v1.1.0] - 2018-10-10
+
+### Added
+
+- support `integer` as validation type.
+
 ## [v1.0.0] - 2018-09-15
 
 ### Added
 
 - initial implementation
 
+[v1.1.0]: https://github.com/sethvincent/args-and-flags/compare/v1.0.0...v1.1.0
 [v1.0.0]: https://github.com/sethvincent/args-and-flags/compare/v1.0.0
