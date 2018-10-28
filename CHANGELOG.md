@@ -6,7 +6,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## Unreleased
 
-- ???
+### Changed
+- layout is determined using `leftColumnWidth` and `rightColumnWidth` params instead of `widthPadding`.
+
+### Added
+- made small adjustment to args/flags header text and help output
+- `description` is now an alias for `help` in arg/flag objects
 
 ## [v1.1.0] - 2018-10-10
 

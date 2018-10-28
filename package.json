@@ -27,7 +27,8 @@
   "dependencies": {
     "is-boolean-object": "^1.0.0",
     "is-regexp": "^2.0.0",
-    "minimist": "^1.2.0"
+    "minimist": "^1.2.0",
+    "word-wrap": "^1.2.3"
   },
   "devDependencies": {
     "documentation": "^8.1.2",

@@ -1,6 +1,7 @@
 const minimist = require('minimist')
 const isBoolean = require('is-boolean-object')
 const isRegexp = require('is-regexp')
+const wrap = require('word-wrap')
 
 /**
 * Parse and validate args and flags for cli tools
@@ -120,50 +121,81 @@ class ArgsAndFlags {
   * @param {object} [options]
   * @param {string} [options.argsHeaderText] - header text above list of arguments. default is `Arguments`
   * @param {string} [options.flagsHeaderText] - header text above list of flags. default is `Flags`
-  * @param {number} [paddingWidth] - max width in number of space characters. default is `30`
+  * @param {number} [leftColumnWidth] - width of left column in pixels. default is `40`
+  * @param {number} [rightColumnWidth] - width of right column in pixels. default is `40`
   * @returns {string}
   **/
   help (options) {
     options = options || {}
-    const { argsHeaderText, flagsHeaderText, paddingWidth } = options
-    const args = this.argsHelp(argsHeaderText, paddingWidth)
-    const flags = this.flagsHelp(flagsHeaderText, paddingWidth)
+    let { argsHeaderText, flagsHeaderText, leftColumnWidth, rightColumnWidth } = options
+    if (!leftColumnWidth) leftColumnWidth = 40
+    if (!rightColumnWidth) rightColumnWidth = 40
+    const args = this.argsHelp(argsHeaderText, leftColumnWidth, rightColumnWidth)
+    const flags = this.flagsHelp(flagsHeaderText, leftColumnWidth, rightColumnWidth)
     return args + '\n\n' + flags
+  }
+
+  logDescription (text, leftColumnWidth, rightColumnWidth) {
+    if (!text) return ''
+    if (text.length > rightColumnWidth) {
+      const lines = wrap(text, { width: rightColumnWidth }).split(/\r?\n/).map((line, i) => {
+        if (i === 0) return line.trim()
+        return ' '.repeat(leftColumnWidth) + line.trim()
+      })
+      return lines.join('\n')
+    }
+    return text
   }
 
   /**
   * Get help text for all args
-  * @param {string} headerText - header text above list of arguments. default is `Arguments`
-  * @param {number} paddingWidth - max width in number of space characters. default is `30`
+  * @param {string} headerText - header text above list of arguments. default is `Arguments:`
+  * @param {number} [leftColumnWidth] - width of left column in pixels. default is `40`
+  * @param {number} [rightColumnWidth] - width of right column in pixels. default is `40`
   * @returns {string}
   **/
-  argsHelp (headerText, paddingWidth) {
+  argsHelp (headerText, leftColumnWidth, rightColumnWidth) {
     if (!this.argsOptions.length) return ''
-    const argumentsHeader = `${this._createIndent()}${headerText || 'Arguments'}\n`
+    if (!leftColumnWidth) leftColumnWidth = 40
+    if (!rightColumnWidth) rightColumnWidth = 40
+    const argumentsHeader = `${this._createIndent()}${headerText || 'Arguments:'}\n`
 
     return argumentsHeader + this.argsOptions.map((arg) => {
-      const line = `${this._createIndent(2)}{${arg.name}}`
-      const width = (paddingWidth || 30) - line.length
+      const line = `${this._createIndent(2)}${arg.name}`
+      const type = arg.type ? arg.type : ''
+      const required = arg.required ? 'required' : ''
+      const defaultValue = arg.default ? `default: ${arg.default}` : ''
+      const meta = [type, required, defaultValue].filter((item) => !!item.length).join(', ')
+      const description = `${meta ? `(${meta}) ` : ''}${arg.help || arg.description || ''}`
+      const width = leftColumnWidth - line.length
       const padding = ' '.repeat(width)
-      return line + padding + (arg.help || '')
+      return line + padding + this.logDescription(description, leftColumnWidth, rightColumnWidth)
     }).join('\n')
   }
 
   /**
   * Get help text for all flags
-  * @param {string} headerText - header text above list of flags. default is `Flags`
-  * @param {number} paddingWidth - max width in number of space characters. default is `30`
+  * @param {string} headerText - header text above list of flags. default is `Flags:`
+  * @param {number} [leftColumnWidth] - width of left column in pixels. default is `40`
+  * @param {number} [rightColumnWidth] - width of right column in pixels. default is `40`
   * @returns {string}
   **/
-  flagsHelp (headerText, paddingWidth) {
+  flagsHelp (headerText, leftColumnWidth, rightColumnWidth) {
     if (!this.flagsOptions.length) return ''
-    const flagsHeader = `${this._createIndent()}${headerText || 'Flags'}\n`
+    if (!leftColumnWidth) leftColumnWidth = 40
+    if (!rightColumnWidth) rightColumnWidth = 40
+    const flagsHeader = `${this._createIndent()}${headerText || 'Flags:'}\n`
 
     return flagsHeader + this.flagsOptions.map((flag) => {
       const line = `${this._createIndent(2)}--${flag.name}${this._addFlagAlias(flag)}    `
-      const width = (paddingWidth || 30) - line.length
+      const type = flag.type ? flag.type : ''
+      const required = flag.required ? 'required' : ''
+      const defaultValue = flag.default ? `default: ${flag.default}` : ''
+      const meta = [type, required, defaultValue].filter((item) => !!item.length).join(', ')
+      const description = `${meta ? `(${meta}) ` : ''}${flag.help || flag.description || ''}`
+      const width = leftColumnWidth - line.length
       const padding = ' '.repeat(width)
-      return line + padding + (flag.help || '')
+      return line + padding + this.logDescription(description, leftColumnWidth, rightColumnWidth)
     }).join('\n')
   }
 
