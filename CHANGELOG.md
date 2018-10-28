@@ -5,6 +5,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
+- _nothing yet ..._
+
+## [v2.0.0] - 2018-10-27
 
 ### Changed
 - layout is determined using `leftColumnWidth` and `rightColumnWidth` params instead of `widthPadding`.
@@ -25,5 +28,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - initial implementation
 
+[v2.0.0]: https://github.com/sethvincent/args-and-flags/compare/v1.1.0...v2.0.0
 [v1.1.0]: https://github.com/sethvincent/args-and-flags/compare/v1.0.0...v1.1.0
 [v1.0.0]: https://github.com/sethvincent/args-and-flags/compare/v1.0.0
