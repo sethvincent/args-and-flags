@@ -31,7 +31,7 @@
     "word-wrap": "^1.2.3"
   },
   "devDependencies": {
-    "documentation": "^8.1.2",
+    "documentation": "^9.1.1",
     "standard": "^12.0.1",
     "tape": "^4.9.1"
   }
