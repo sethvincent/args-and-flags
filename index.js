@@ -63,8 +63,9 @@ class ArgsAndFlags {
       }
     })
 
+    minimistArgs._ = minimistOutput._
+    delete minimistOutput._
     const minimistFlags = minimistOutput
-    delete minimistOutput['_']
 
     this.flagsOptions.forEach((flagOption) => {
       if (minimistFlags[flagOption.name]) {

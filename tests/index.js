@@ -20,7 +20,7 @@ test('hello args and flags', function (t) {
       },
       {
         name: 'int',
-        alias: 'i',
+        alias: ['i', 'integer'],
         type: 'integer',
         help: 'an integer argument'
       }
@@ -31,9 +31,11 @@ test('hello args and flags', function (t) {
   const { args, flags } = parser.parse(['hi', '-m', '--int', '1'])
 
   t.ok(args.hello === 'hi')
+  t.ok(args._ && args._.length === 1)
   t.ok(flags.message === true)
   t.ok(flags.m === true)
   t.ok(flags.int === 1)
+  t.ok(flags.integer)
 
   t.end()
 })
