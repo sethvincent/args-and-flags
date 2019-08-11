@@ -8,7 +8,7 @@ const wrap = require('word-wrap')
 * @param [args] - arguments
 * @param [flags] - flags
 * @param [indent] - how many spaces to indent help text
-**/
+*/
 class ArgsAndFlags {
   constructor (options) {
     let { args, flags } = options
@@ -27,7 +27,7 @@ class ArgsAndFlags {
   * Parse and validate args and flags for cli tools
   * @param {object[]} argsInput - actual args supplied at command line
   * @return {object}
-  **/
+  */
   parse (argsInput) {
     const minimistOutput = minimist(argsInput, this.minimistOptions)
 
@@ -50,37 +50,33 @@ class ArgsAndFlags {
       return obj
     }, {})
 
-    this.argsOptions.forEach((argOption, i) => {
-      if (!minimistArgs[argOption.name]) {
-        if (argOption.default) {
-          minimistArgs[argOption.name] = argOption.default
-        } else {
-          if (argOption.required) {
-            console.error(new Error(`arg \`${argOption.name}\` is required`))
-            process.exit(1)
+    const checkValues = (options, output) => {
+      options.forEach((option) => {
+        const aliases = getAllPropertyKeyNames(option).concat(option.name)
+        const defaultValue = getDefaultValue(option.default)
+
+        aliases.forEach((alias) => {
+          if (!output[alias]) {
+            if (!defaultValue && option.required) {
+              // TODO: collect all errors
+              console.error(new Error(`\`${option.name}\` is required`))
+              return process.exit(1)
+            }
+
+            output[alias] = defaultValue
+          } else {
+            this.validate(option.type, output[alias])
           }
-        }
-      }
-    })
+        })
+      })
+    }
 
     minimistArgs._ = minimistOutput._
     delete minimistOutput._
     const minimistFlags = minimistOutput
 
-    this.flagsOptions.forEach((flagOption) => {
-      if (minimistFlags[flagOption.name]) {
-        this.validate(flagOption.type, minimistFlags[flagOption.name])
-      } else {
-        if (flagOption.default) {
-          minimistFlags[flagOption.name] = flagOption.default
-        } else {
-          if (flagOption.required) {
-            console.error(new Error(`flag \`${flagOption.name}\` is required`))
-            process.exit(1)
-          }
-        }
-      }
-    })
+    checkValues(this.argsOptions, minimistArgs)
+    checkValues(this.flagsOptions, minimistFlags)
 
     return {
       args: minimistArgs,
@@ -125,7 +121,7 @@ class ArgsAndFlags {
   * @param {number} [leftColumnWidth] - width of left column in pixels. default is `40`
   * @param {number} [rightColumnWidth] - width of right column in pixels. default is `40`
   * @returns {string}
-  **/
+  */
   help (options) {
     options = options || {}
     let { argsHeaderText, flagsHeaderText, leftColumnWidth, rightColumnWidth } = options
@@ -154,7 +150,7 @@ class ArgsAndFlags {
   * @param {number} [leftColumnWidth] - width of left column in pixels. default is `40`
   * @param {number} [rightColumnWidth] - width of right column in pixels. default is `40`
   * @returns {string}
-  **/
+  */
   argsHelp (headerText, leftColumnWidth, rightColumnWidth) {
     if (!this.argsOptions.length) return ''
     if (!leftColumnWidth) leftColumnWidth = 40
@@ -165,7 +161,7 @@ class ArgsAndFlags {
       const line = `${this._createIndent(2)}${arg.name}`
       const type = arg.type ? arg.type : ''
       const required = arg.required ? 'required' : ''
-      const defaultValue = arg.default ? `default: ${arg.default}` : ''
+      const defaultValue = (arg.default) ? `default: ${getDefaultValue(arg.default)}` : ''
       const meta = [type, required, defaultValue].filter((item) => !!item.length).join(', ')
       const description = `${meta ? `(${meta}) ` : ''}${arg.help || arg.description || ''}`
       const width = leftColumnWidth - line.length
@@ -180,7 +176,7 @@ class ArgsAndFlags {
   * @param {number} [leftColumnWidth] - width of left column in pixels. default is `40`
   * @param {number} [rightColumnWidth] - width of right column in pixels. default is `40`
   * @returns {string}
-  **/
+  */
   flagsHelp (headerText, leftColumnWidth, rightColumnWidth) {
     if (!this.flagsOptions.length) return ''
     if (!leftColumnWidth) leftColumnWidth = 40
@@ -191,7 +187,7 @@ class ArgsAndFlags {
       const line = `${this._createIndent(2)}--${flag.name}${this._addFlagAlias(flag)}    `
       const type = flag.type ? flag.type : ''
       const required = flag.required ? 'required' : ''
-      const defaultValue = flag.default ? `default: ${flag.default}` : ''
+      const defaultValue = (flag.default) ? `default: ${getDefaultValue(flag.default)}` : ''
       const meta = [type, required, defaultValue].filter((item) => !!item.length).join(', ')
       const description = `${meta ? `(${meta}) ` : ''}${flag.help || flag.description || ''}`
       const width = leftColumnWidth - line.length
@@ -206,6 +202,23 @@ class ArgsAndFlags {
 }
 
 module.exports = ArgsAndFlags
+
+// TODO: allow promises
+function getDefaultValue (defaultValue) {
+  if (!defaultValue) return
+
+  if (typeof defaultValue === 'function') {
+    return defaultValue()
+  } else {
+    return defaultValue
+  }
+}
+
+function getAllPropertyKeyNames (option) {
+  return option.alias
+    ? (Array.isArray(option.alias) ? option.alias : [option.alias])
+    : []
+}
 
 function getBooleans (arr) {
   return arr

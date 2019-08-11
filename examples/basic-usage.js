@@ -1,5 +1,7 @@
 const ArgsAndFlags = require('../index')
 
+// node examples/basic-usage.js hi -m ok
+
 const options = {
   args: [
     {
@@ -32,6 +34,14 @@ const options = {
     {
       name: 'message',
       alias: 'm',
+      type: 'string',
+      help: 'a string argument',
+      required: true
+    },
+    {
+      name: 'defaultValueFunction',
+      alias: 'd',
+      default: () => { return 'hi' },
       type: 'string',
       help: 'a string argument',
       required: true

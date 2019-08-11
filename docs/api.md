@@ -23,7 +23,6 @@ Parse and validate args and flags for cli tools
 -   `args`  arguments
 -   `flags`  flags
 -   `indent`  how many spaces to indent help text
-    \*
 
 ### parse
 
@@ -33,7 +32,7 @@ Parse and validate args and flags for cli tools
 
 -   `argsInput` **[Array][11]&lt;[object][12]>** actual args supplied at command line
 
-Returns **[object][12]** \*
+Returns **[object][12]** 
 
 ### help
 
@@ -47,7 +46,7 @@ Get help text for all args
 -   `leftColumnWidth` **[number][14]?** width of left column in pixels. default is `40`
 -   `rightColumnWidth` **[number][14]?** width of right column in pixels. default is `40`
 
-Returns **[string][13]** \*
+Returns **[string][13]** 
 
 ### argsHelp
 
@@ -59,7 +58,7 @@ Get help text for all args
 -   `leftColumnWidth` **[number][14]?** width of left column in pixels. default is `40`
 -   `rightColumnWidth` **[number][14]?** width of right column in pixels. default is `40`
 
-Returns **[string][13]** \*
+Returns **[string][13]** 
 
 ### flagsHelp
 
@@ -71,7 +70,7 @@ Get help text for all flags
 -   `leftColumnWidth` **[number][14]?** width of left column in pixels. default is `40`
 -   `rightColumnWidth` **[number][14]?** width of right column in pixels. default is `40`
 
-Returns **[string][13]** \*
+Returns **[string][13]** 
 
 [1]: #argsandflags
 

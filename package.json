@@ -26,13 +26,13 @@
   "homepage": "https://github.com/sethvincent/args-and-flags#readme",
   "dependencies": {
     "is-boolean-object": "^1.0.0",
-    "is-regexp": "^2.0.0",
+    "is-regexp": "^2.1.0",
     "minimist": "^1.2.0",
     "word-wrap": "^1.2.3"
   },
   "devDependencies": {
-    "documentation": "^9.1.1",
-    "standard": "^12.0.1",
-    "tape": "^4.9.1"
+    "documentation": "^12.1.1",
+    "standard": "^13.1.0",
+    "tape": "^4.11.0"
   }
 }
