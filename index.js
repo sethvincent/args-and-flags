@@ -1,7 +1,7 @@
 const minimist = require('minimist')
 const isBoolean = require('is-boolean-object')
 const isRegexp = require('is-regexp')
-const wrap = require('word-wrap')
+const wrap = require('wrap-ansi')
 
 /**
 * Parse and validate args and flags for cli tools
@@ -118,27 +118,47 @@ class ArgsAndFlags {
   * @param {object} [options]
   * @param {string} [options.argsHeaderText] - header text above list of arguments. default is `Arguments`
   * @param {string} [options.flagsHeaderText] - header text above list of flags. default is `Flags`
-  * @param {number} [leftColumnWidth] - width of left column in pixels. default is `40`
-  * @param {number} [rightColumnWidth] - width of right column in pixels. default is `40`
+  * @param {number} [options.leftColumnWidth] - width of left section in columns. default is the length of the longest arg or flag name
+  * @param {number} [options.rightColumnWidth] - width of right section in columns. default is the full width of the terminal minus the leftColumnWidth
+  * @param {number} [options.gutter] - width of gutter in columns. default is `4`
   * @returns {string}
   */
   help (options) {
     options = options || {}
-    let { argsHeaderText, flagsHeaderText, leftColumnWidth, rightColumnWidth } = options
-    if (!leftColumnWidth) leftColumnWidth = 40
-    if (!rightColumnWidth) rightColumnWidth = 40
-    const args = this.argsHelp(argsHeaderText, leftColumnWidth, rightColumnWidth)
-    const flags = this.flagsHelp(flagsHeaderText, leftColumnWidth, rightColumnWidth)
+    const argLines = this.argsOptions.map((arg) => {
+      return `${this._createIndent(2)}${arg.name}`
+    })
+
+    const flagLines = this.flagsOptions.map((flag) => {
+      return `${this._createIndent(2)}--${flag.name}${this._addFlagAlias(flag)}`
+    })
+
+    const longestLine = (argLines.concat(flagLines)).reduce((longest, line) => {
+      return line.length > longest ? line.length : longest
+    }, 0)
+
+    const args = this.argsHelp(Object.assign(options, { longestLine, lines: argLines }))
+    const flags = this.flagsHelp(Object.assign(options, { longestLine, lines: flagLines }))
     return args + '\n\n' + flags
   }
 
-  logDescription (text, leftColumnWidth, rightColumnWidth) {
+  /**
+  * Format description
+  * @param {string} text - description text
+  * @param {number} leftColumnWidth - width of left section in columns
+  * @param {number} rightColumnWidth - width of right section in columns
+  * @param {number} gutter - width of gutter in columns
+  * @returns {string}
+  */
+  formatDescription (text, leftColumnWidth, rightColumnWidth, gutter) {
     if (!text) return ''
-    if (text.length > rightColumnWidth) {
-      const lines = wrap(text, { width: rightColumnWidth }).split(/\r?\n/).map((line, i) => {
+
+    if (text.length > rightColumnWidth - gutter) {
+      const lines = wrap(text, rightColumnWidth - gutter, {  }).split(/\r?\n/).map((line, i) => {
         if (i === 0) return line.trim()
-        return ' '.repeat(leftColumnWidth) + line.trim()
+        return ' '.repeat(leftColumnWidth + gutter) + line.trim()
       })
+
       return lines.join('\n')
     }
     return text
@@ -146,53 +166,86 @@ class ArgsAndFlags {
 
   /**
   * Get help text for all args
-  * @param {string} headerText - header text above list of arguments. default is `Arguments:`
-  * @param {number} [leftColumnWidth] - width of left column in pixels. default is `40`
-  * @param {number} [rightColumnWidth] - width of right column in pixels. default is `40`
+  * @param {object} options
+  * @param {array} options.lines - lines of text in an array
+  * @param {integer} options.longestLine - integer for the longest line in the array of lines (of both args and flags)
+  * @param {string} [options.headerText] - header text above list of arguments. default is `Arguments:`
+  * @param {number} [options.leftColumnWidth] - width of left section in columns. default is the length of the longest arg or flag name
+  * @param {number} [options.rightColumnWidth] - width of right section in columns. default is the full width of the terminal minus the leftColumnWidth
+  * @param {number} [options.gutter] - width of gutter in columns. default is `4`
   * @returns {string}
   */
-  argsHelp (headerText, leftColumnWidth, rightColumnWidth) {
+  argsHelp (options) {
     if (!this.argsOptions.length) return ''
-    if (!leftColumnWidth) leftColumnWidth = 40
-    if (!rightColumnWidth) rightColumnWidth = 40
-    const argumentsHeader = `${this._createIndent()}${headerText || 'Arguments:'}\n`
 
-    return argumentsHeader + this.argsOptions.map((arg) => {
-      const line = `${this._createIndent(2)}${arg.name}`
+    let {
+      lines,
+      headerText = 'Arguments:',
+      longestLine,
+      leftColumnWidth = longestLine,
+      rightColumnWidth = process.stdout.columns - longestLine,
+      gutter = 4
+    } = options
+
+    const argumentsHeader = `${this._createIndent()}${headerText}\n`
+
+    if (leftColumnWidth > longestLine) {
+      leftColumnWidth = longestLine
+    }
+
+    return argumentsHeader + this.argsOptions.map((arg, i) => {
+      const line = lines[i]
       const type = arg.type ? arg.type : ''
       const required = arg.required ? 'required' : ''
       const defaultValue = (arg.default) ? `default: ${getDefaultValue(arg.default)}` : ''
       const meta = [type, required, defaultValue].filter((item) => !!item.length).join(', ')
       const description = `${meta ? `(${meta}) ` : ''}${arg.help || arg.description || ''}`
-      const width = leftColumnWidth - line.length
-      const padding = ' '.repeat(width)
-      return line + padding + this.logDescription(description, leftColumnWidth, rightColumnWidth)
+      const width = leftColumnWidth - line.length + gutter
+      const padding = width > 0 ? ' '.repeat(width) : ''
+      return line + padding + this.formatDescription(description, leftColumnWidth, rightColumnWidth, gutter)
     }).join('\n')
   }
 
   /**
   * Get help text for all flags
-  * @param {string} headerText - header text above list of flags. default is `Flags:`
-  * @param {number} [leftColumnWidth] - width of left column in pixels. default is `40`
-  * @param {number} [rightColumnWidth] - width of right column in pixels. default is `40`
+  * @param {object} options
+  * @param {array} options.lines - lines of text in an array
+  * @param {integer} options.longestLine - integer for the longest line in the array of lines (of both args and flags)
+  * @param {string} [options.headerText] - header text above list of flags. default is `Flags:`
+  * @param {number} [options.leftColumnWidth] - width of left section in columns. default is the length of the longest arg or flag name
+  * @param {number} [options.rightColumnWidth] - width of right section in columns. default is the full width of the terminal minus the leftColumnWidth
+  * @param {number} [options.gutter] - width of gutter in columns. default is `4`
   * @returns {string}
   */
-  flagsHelp (headerText, leftColumnWidth, rightColumnWidth) {
+  flagsHelp (options) {
     if (!this.flagsOptions.length) return ''
-    if (!leftColumnWidth) leftColumnWidth = 40
-    if (!rightColumnWidth) rightColumnWidth = 40
-    const flagsHeader = `${this._createIndent()}${headerText || 'Flags:'}\n`
+    const defaultWidth = process.stdout.columns / 2
 
-    return flagsHeader + this.flagsOptions.map((flag) => {
-      const line = `${this._createIndent(2)}--${flag.name}${this._addFlagAlias(flag)}    `
+    let {
+      lines,
+      headerText = 'Flags:',
+      longestLine,
+      leftColumnWidth = defaultWidth,
+      rightColumnWidth = defaultWidth,
+      gutter = 4
+    } = options
+
+    const flagsHeader = `${this._createIndent()}${headerText}\n`
+
+    if (leftColumnWidth > longestLine) {
+      leftColumnWidth = longestLine
+    }
+
+    return flagsHeader + this.flagsOptions.map((flag, i) => {
+      const line = lines[i]
       const type = flag.type ? flag.type : ''
       const required = flag.required ? 'required' : ''
       const defaultValue = (flag.default) ? `default: ${getDefaultValue(flag.default)}` : ''
       const meta = [type, required, defaultValue].filter((item) => !!item.length).join(', ')
       const description = `${meta ? `(${meta}) ` : ''}${flag.help || flag.description || ''}`
-      const width = leftColumnWidth - line.length
-      const padding = ' '.repeat(width)
-      return line + padding + this.logDescription(description, leftColumnWidth, rightColumnWidth)
+      const width = leftColumnWidth - line.length + gutter
+      const padding = width > 0 ? ' '.repeat(width) : ''
+      return line + padding + this.formatDescription(description, leftColumnWidth, rightColumnWidth, gutter)
     }).join('\n')
   }
 

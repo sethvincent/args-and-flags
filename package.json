@@ -6,6 +6,7 @@
   "scripts": {
     "doc": "documentation build index.js -f md > docs/api.md",
     "test": "node tests/*.js",
+    "lintfix": "standard --fix",
     "lint": "standard"
   },
   "repository": {
@@ -28,7 +29,8 @@
     "is-boolean-object": "^1.0.0",
     "is-regexp": "^2.1.0",
     "minimist": "^1.2.0",
-    "word-wrap": "^1.2.3"
+    "word-wrap": "^1.2.3",
+    "wrap-ansi": "^6.1.0"
   },
   "devDependencies": {
     "documentation": "^12.1.1",
