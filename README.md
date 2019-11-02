@@ -22,6 +22,8 @@ An argument parser based on [minimist](https://npmjs.com/minimist) that offers n
 npm install --save args-and-flags
 ```
 
+> Node v8 and higher is required
+
 ## Usage
 
 ```js
