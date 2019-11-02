@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## Unreleased
 - _nothing yet ..._
 
+## [2.2.1] - 2019-11-02
+
+### Fixed
+- use process.stdout.columns to improve default output spacing
+
 ## [v2.2.0] - 2019-08-11
 
 ### Added
@@ -38,6 +43,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - initial implementation
 
+[v2.2.1]: https://github.com/sethvincent/args-and-flags/compare/v2.2.0...v2.2.1
 [v2.2.0]: https://github.com/sethvincent/args-and-flags/compare/v2.1.0...v2.2.0
 [v2.1.0]: https://github.com/sethvincent/args-and-flags/compare/v2.0.0...v2.1.0
 [v2.0.0]: https://github.com/sethvincent/args-and-flags/compare/v1.1.0...v2.0.0
