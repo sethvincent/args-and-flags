@@ -114,6 +114,42 @@ class ArgsAndFlags {
   }
 
   /**
+  * Get help information for all args and flags as an object
+  * @param {object} [options]
+  * @param {string} [options.indent] - amount to indent lines
+  * @returns {object}
+  */
+  helpObject (options) {
+    const {
+      indent = 2
+    } = options
+
+    const argLines = this.argsOptions.map((arg) => {
+      return `${this._createIndent(indent)}${arg.name}`
+    })
+
+    const flagLines = this.flagsOptions.map((flag) => {
+      return `${this._createIndent(indent)}--${flag.name}${this._addFlagAlias(flag)}`
+    })
+
+    const longestLine = (argLines.concat(flagLines)).reduce((longest, line) => {
+      return line.length > longest ? line.length : longest
+    }, 0)
+
+    return {
+      args: {
+        options: this.argsOptions,
+        lines: argLines
+      },
+      flags: {
+        options: this.flagsOptions,
+        lines: flagLines
+      },
+      longestLine
+    }
+  }
+
+  /**
   * Get help text for all args
   * @param {object} [options]
   * @param {string} [options.argsHeaderText] - header text above list of arguments. default is `Arguments`
@@ -154,7 +190,7 @@ class ArgsAndFlags {
     if (!text) return ''
 
     if (text.length > rightColumnWidth - gutter) {
-      const lines = wrap(text, rightColumnWidth - gutter, {  }).split(/\r?\n/).map((line, i) => {
+      const lines = wrap(text, rightColumnWidth - gutter, { }).split(/\r?\n/).map((line, i) => {
         if (i === 0) return line.trim()
         return ' '.repeat(leftColumnWidth + gutter) + line.trim()
       })

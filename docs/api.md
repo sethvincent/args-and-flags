@@ -6,14 +6,16 @@
     -   [Parameters][2]
     -   [parse][3]
         -   [Parameters][4]
-    -   [help][5]
+    -   [helpObject][5]
         -   [Parameters][6]
-    -   [formatDescription][7]
+    -   [help][7]
         -   [Parameters][8]
-    -   [argsHelp][9]
+    -   [formatDescription][9]
         -   [Parameters][10]
-    -   [flagsHelp][11]
+    -   [argsHelp][11]
         -   [Parameters][12]
+    -   [flagsHelp][13]
+        -   [Parameters][14]
 
 ## ArgsAndFlags
 
@@ -32,9 +34,20 @@ Parse and validate args and flags for cli tools
 
 #### Parameters
 
--   `argsInput` **[Array][13]&lt;[object][14]>** actual args supplied at command line
+-   `argsInput` **[Array][15]&lt;[object][16]>** actual args supplied at command line
 
-Returns **[object][14]** 
+Returns **[object][16]** 
+
+### helpObject
+
+Get help information for all args and flags as an object
+
+#### Parameters
+
+-   `options` **[object][16]?** 
+    -   `options.indent` **[string][17]?** amount to indent lines
+
+Returns **[object][16]** 
 
 ### help
 
@@ -42,14 +55,14 @@ Get help text for all args
 
 #### Parameters
 
--   `options` **[object][14]?** 
-    -   `options.argsHeaderText` **[string][15]?** header text above list of arguments. default is `Arguments`
-    -   `options.flagsHeaderText` **[string][15]?** header text above list of flags. default is `Flags`
-    -   `options.leftColumnWidth` **[number][16]?** width of left section in columns. default is the length of the longest arg or flag name
-    -   `options.rightColumnWidth` **[number][16]?** width of right section in columns. default is the full width of the terminal minus the leftColumnWidth
-    -   `options.gutter` **[number][16]?** width of gutter in columns. default is `4`
+-   `options` **[object][16]?** 
+    -   `options.argsHeaderText` **[string][17]?** header text above list of arguments. default is `Arguments`
+    -   `options.flagsHeaderText` **[string][17]?** header text above list of flags. default is `Flags`
+    -   `options.leftColumnWidth` **[number][18]?** width of left section in columns. default is the length of the longest arg or flag name
+    -   `options.rightColumnWidth` **[number][18]?** width of right section in columns. default is the full width of the terminal minus the leftColumnWidth
+    -   `options.gutter` **[number][18]?** width of gutter in columns. default is `4`
 
-Returns **[string][15]** 
+Returns **[string][17]** 
 
 ### formatDescription
 
@@ -57,12 +70,12 @@ Format description
 
 #### Parameters
 
--   `text` **[string][15]** description text
--   `leftColumnWidth` **[number][16]** width of left section in columns
--   `rightColumnWidth` **[number][16]** width of right section in columns
--   `gutter` **[number][16]** width of gutter in columns
+-   `text` **[string][17]** description text
+-   `leftColumnWidth` **[number][18]** width of left section in columns
+-   `rightColumnWidth` **[number][18]** width of right section in columns
+-   `gutter` **[number][18]** width of gutter in columns
 
-Returns **[string][15]** 
+Returns **[string][17]** 
 
 ### argsHelp
 
@@ -70,15 +83,15 @@ Get help text for all args
 
 #### Parameters
 
--   `options` **[object][14]** 
-    -   `options.lines` **[array][13]** lines of text in an array
+-   `options` **[object][16]** 
+    -   `options.lines` **[array][15]** lines of text in an array
     -   `options.longestLine` **integer** integer for the longest line in the array of lines (of both args and flags)
-    -   `options.headerText` **[string][15]?** header text above list of arguments. default is `Arguments:`
-    -   `options.leftColumnWidth` **[number][16]?** width of left section in columns. default is the length of the longest arg or flag name
-    -   `options.rightColumnWidth` **[number][16]?** width of right section in columns. default is the full width of the terminal minus the leftColumnWidth
-    -   `options.gutter` **[number][16]?** width of gutter in columns. default is `4`
+    -   `options.headerText` **[string][17]?** header text above list of arguments. default is `Arguments:`
+    -   `options.leftColumnWidth` **[number][18]?** width of left section in columns. default is the length of the longest arg or flag name
+    -   `options.rightColumnWidth` **[number][18]?** width of right section in columns. default is the full width of the terminal minus the leftColumnWidth
+    -   `options.gutter` **[number][18]?** width of gutter in columns. default is `4`
 
-Returns **[string][15]** 
+Returns **[string][17]** 
 
 ### flagsHelp
 
@@ -86,15 +99,15 @@ Get help text for all flags
 
 #### Parameters
 
--   `options` **[object][14]** 
-    -   `options.lines` **[array][13]** lines of text in an array
+-   `options` **[object][16]** 
+    -   `options.lines` **[array][15]** lines of text in an array
     -   `options.longestLine` **integer** integer for the longest line in the array of lines (of both args and flags)
-    -   `options.headerText` **[string][15]?** header text above list of flags. default is `Flags:`
-    -   `options.leftColumnWidth` **[number][16]?** width of left section in columns. default is the length of the longest arg or flag name
-    -   `options.rightColumnWidth` **[number][16]?** width of right section in columns. default is the full width of the terminal minus the leftColumnWidth
-    -   `options.gutter` **[number][16]?** width of gutter in columns. default is `4`
+    -   `options.headerText` **[string][17]?** header text above list of flags. default is `Flags:`
+    -   `options.leftColumnWidth` **[number][18]?** width of left section in columns. default is the length of the longest arg or flag name
+    -   `options.rightColumnWidth` **[number][18]?** width of right section in columns. default is the full width of the terminal minus the leftColumnWidth
+    -   `options.gutter` **[number][18]?** width of gutter in columns. default is `4`
 
-Returns **[string][15]** 
+Returns **[string][17]** 
 
 [1]: #argsandflags
 
@@ -104,26 +117,30 @@ Returns **[string][15]**
 
 [4]: #parameters-1
 
-[5]: #help
+[5]: #helpobject
 
 [6]: #parameters-2
 
-[7]: #formatdescription
+[7]: #help
 
 [8]: #parameters-3
 
-[9]: #argshelp
+[9]: #formatdescription
 
 [10]: #parameters-4
 
-[11]: #flagshelp
+[11]: #argshelp
 
 [12]: #parameters-5
 
-[13]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
+[13]: #flagshelp
 
-[14]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+[14]: #parameters-6
 
-[15]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+[15]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array
 
-[16]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number
+[16]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object
+
+[17]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String
+
+[18]: https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number

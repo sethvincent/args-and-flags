@@ -7,6 +7,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## Unreleased
 - _nothing yet ..._
 
+## [2.3.0] - 2019-11-02
+
+### Added
+- Expose `helpObject` function to get help information for all args and flags as an object
+
+## [2.2.2] - 2019-11-02
+
+### Fixed
+- update deps
+
 ## [2.2.1] - 2019-11-02
 
 ### Fixed
@@ -43,6 +53,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - initial implementation
 
+[v2.3.0]: https://github.com/sethvincent/args-and-flags/compare/v2.2.2...v2.3.0
+[v2.2.2]: https://github.com/sethvincent/args-and-flags/compare/v2.2.1...v2.2.2
 [v2.2.1]: https://github.com/sethvincent/args-and-flags/compare/v2.2.0...v2.2.1
 [v2.2.0]: https://github.com/sethvincent/args-and-flags/compare/v2.1.0...v2.2.0
 [v2.1.0]: https://github.com/sethvincent/args-and-flags/compare/v2.0.0...v2.1.0
