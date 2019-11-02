@@ -1,6 +1,6 @@
 {
   "name": "args-and-flags",
-  "version": "2.2.2",
+  "version": "2.3.0",
   "description": "parse and validate args and flags for commandline tools",
   "main": "index.js",
   "scripts": {
