@@ -1,6 +1,6 @@
 {
   "name": "args-and-flags",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "parse and validate args and flags for commandline tools",
   "main": "index.js",
   "type": "module",
