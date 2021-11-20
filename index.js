@@ -1,7 +1,7 @@
-const minimist = require('minimist')
-const isBoolean = require('is-boolean-object')
-const isRegexp = require('is-regexp')
-const wrap = require('wrap-ansi')
+import mri from 'mri'
+import isBoolean from 'is-boolean-object'
+import isRegexp from 'is-regexp'
+import wrap from 'wrap-ansi'
 
 /**
 * Parse and validate args and flags for cli tools
@@ -17,10 +17,10 @@ class ArgsAndFlags {
     this.indent = options.indent || 2
     this.argsOptions = args
     this.flagsOptions = flags
-    this.minimistOptions = {}
-    this.minimistOptions.boolean = getBooleans(this.flagsOptions)
-    this.minimistOptions.string = getStrings(this.flagsOptions)
-    this.minimistOptions.alias = getAlias(this.flagsOptions)
+    this.argumentParserOptions = {}
+    this.argumentParserOptions.boolean = getBooleans(this.flagsOptions)
+    this.argumentParserOptions.string = getStrings(this.flagsOptions)
+    this.argumentParserOptions.alias = getAlias(this.flagsOptions)
   }
 
   /**
@@ -29,9 +29,9 @@ class ArgsAndFlags {
   * @return {object}
   */
   parse (argsInput) {
-    const minimistOutput = minimist(argsInput, this.minimistOptions)
+    const argumentParserOutput = mri(argsInput, this.argumentParserOptions)
 
-    const minimistArgs = minimistOutput['_'].reduce((obj, arg, i) => {
+    const argumentParserArgs = argumentParserOutput['_'].reduce((obj, arg, i) => {
       if (!this.argsOptions[i]) {
         obj[arg] = arg
         return obj
@@ -71,16 +71,16 @@ class ArgsAndFlags {
       })
     }
 
-    minimistArgs._ = minimistOutput._
-    delete minimistOutput._
-    const minimistFlags = minimistOutput
+    argumentParserArgs._ = argumentParserOutput._
+    delete argumentParserOutput._
+    const argumentParserFlags = argumentParserOutput
 
-    checkValues(this.argsOptions, minimistArgs)
-    checkValues(this.flagsOptions, minimistFlags)
+    checkValues(this.argsOptions, argumentParserArgs)
+    checkValues(this.flagsOptions, argumentParserFlags)
 
     return {
-      args: minimistArgs,
-      flags: minimistFlags
+      args: argumentParserArgs,
+      flags: argumentParserFlags
     }
   }
 
@@ -290,7 +290,7 @@ class ArgsAndFlags {
   }
 }
 
-module.exports = ArgsAndFlags
+export default ArgsAndFlags
 
 // TODO: allow promises
 function getDefaultValue (defaultValue) {

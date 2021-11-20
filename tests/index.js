@@ -1,5 +1,5 @@
-const test = require('tape')
-const ArgsAndFlags = require('../index')
+import test from 'tape'
+import ArgsAndFlags from '../index.js'
 
 test('hello args and flags', function (t) {
   const options = {
