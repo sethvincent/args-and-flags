@@ -7,6 +7,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ## Unreleased
 - _nothing yet ..._
 
+## [3.0.0] - 2021-11-20
+
+### Changed
+- Switch to ES modules
+
 ## [2.3.0] - 2019-11-02
 
 ### Added
