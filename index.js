@@ -39,6 +39,13 @@ class ArgsAndFlags {
 
       const argType = this.argsOptions[i].type
 
+      if (argType === 'number') {
+        const num = +arg
+        if (num * 0 === 0) {
+          arg = num
+        }
+      }
+
       if (this.argsOptions[i]) {
         if (this.validate(argType, arg)) {
           obj[this.argsOptions[i].name] = arg
