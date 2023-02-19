@@ -27,21 +27,21 @@ npm install --save args-and-flags
 import ArgsAndFlags from 'args-and-flags'
 
 const options = {
-  args: [
-    {
-      name: 'hello',
-      type: 'string',
-      help: 'an argument for saying hello'
-    }
-  ],
-  flags: [
-    {
-      name: 'message',
-      alias: 'm',
-      type: 'boolean',
-      help: 'a boolean argument'
-    }
-  ]
+	args: [
+		{
+			name: 'hello',
+			type: 'string',
+			help: 'an argument for saying hello'
+		}
+	],
+	flags: [
+		{
+			name: 'message',
+			alias: 'm',
+			type: 'boolean',
+			help: 'a boolean argument'
+		}
+	]
 }
 
 const parser = new ArgsAndFlags(options)
@@ -49,10 +49,12 @@ const { args, flags } = parser.parse(['hi', '-m'])
 ```
 
 ## Documentation
+
 - [API](docs/api.md)
 - [Tests](tests/)
 
 ### Examples
+
 - [Basic example](examples/basic-usage.js)
 
 ## Contributing

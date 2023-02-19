@@ -1,41 +1,40 @@
 {
-  "name": "args-and-flags",
-  "version": "3.0.1",
-  "description": "parse and validate args and flags for commandline tools",
-  "main": "index.js",
-  "type": "module",
-  "scripts": {
-    "doc": "documentation build index.js -f md > docs/api.md",
-    "test": "node tests/*.js",
-    "lintfix": "standard --fix",
-    "lint": "standard"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/sethvincent/args-and-flags.git"
-  },
-  "keywords": [
-    "minimist",
-    "cli",
-    "args",
-    "flags"
-  ],
-  "author": "sethvincent <sethvincent@gmail.com> (https://sethvincent.com/)",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/sethvincent/args-and-flags/issues"
-  },
-  "homepage": "https://github.com/sethvincent/args-and-flags#readme",
-  "dependencies": {
-    "is-boolean-object": "^1.1.2",
-    "is-regexp": "^3.1.0",
-    "mri": "^1.2.0",
-    "word-wrap": "^1.2.3",
-    "wrap-ansi": "^8.0.1"
-  },
-  "devDependencies": {
-    "documentation": "^13.2.5",
-    "standard": "^17.0.0",
-    "tape": "^5.5.3"
-  }
+	"name": "args-and-flags",
+	"version": "3.0.1",
+	"description": "parse and validate args and flags for commandline tools",
+	"main": "index.js",
+	"type": "module",
+	"scripts": {
+		"doc": "documentation build index.js -f md > docs/api.md",
+		"test": "node tests/*.js",
+		"format": "dxv format",
+		"lint": "dxv lint"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/sethvincent/args-and-flags.git"
+	},
+	"keywords": [
+		"minimist",
+		"cli",
+		"args",
+		"flags"
+	],
+	"author": "sethvincent <sethvincent@gmail.com> (https://sethvincent.com/)",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/sethvincent/args-and-flags/issues"
+	},
+	"homepage": "https://github.com/sethvincent/args-and-flags#readme",
+	"dependencies": {
+		"is-boolean-object": "^1.1.2",
+		"is-regexp": "^3.1.0",
+		"mri": "^1.2.0",
+		"wrap-ansi": "^8.1.0"
+	},
+	"devDependencies": {
+		"@dxv/cli": "^1.2.0",
+		"documentation": "^14.0.1",
+		"tape": "^5.6.3"
+	}
 }
