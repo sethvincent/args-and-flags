@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 - _nothing yet ..._
 
+## [3.0.3] - 2023-02-19
+
+### Fixed
+
+- Fix parsing and validation of integer arguments
+
+## [3.0.1] - 2023-02-19
+
+### Fixed
+
+- Cast arguments as numbers if given that type in config
+
 ## [3.0.0] - 2021-11-20
 
 ### Changed
